@@ -34,6 +34,9 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-cli</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+            <!-- This is to prevent the unnecessary download of the transitive dependencies (such as webfx-cli and the
+                 webfx-platform modules) in the projects using webfx-cli-fat (ex: webfx-maven-plugin) -->
+            <optional>true</optional>
         </dependency>
 
     </dependencies>
