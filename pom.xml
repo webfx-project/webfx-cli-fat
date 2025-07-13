@@ -9,13 +9,12 @@
         <groupId>dev.webfx</groupId>
         <artifactId>webfx-parent</artifactId>
         <version>0.1.0-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
     <artifactId>webfx-cli-fat</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
 
     <repositories>
-        <!-- For WebFX snapshots download (including webfx-parent) -->
         <repository>
             <id>webfx-snapshots</id>
             <url>https://central.sonatype.com/repository/maven-snapshots/</url>
@@ -28,35 +27,47 @@
         </repository>
     </repositories>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-cli</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <!-- This is to prevent the unnecessary download of the transitive dependencies (such as webfx-cli and the
-                 webfx-platform modules) in the projects using webfx-cli-fat (ex: webfx-maven-plugin) -->
-            <optional>true</optional>
-        </dependency>
-
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>shade</goal></goals>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <!-- This is to remove the original transitive dependencies present in webfx-cli, so that
+                                     the webfx-maven-plugin (which uses this webfx-cli-fat project) won't unnecessarily
+                                     download all these transitive dependencies before running. -->
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-cli</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-javatime-emul-j2cl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+    </dependencies>
+
 </project>

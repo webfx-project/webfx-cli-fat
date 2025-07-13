@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="webfx-cli-fat">
+
+    <parent name="webfx-parent"/>
+
+    <dependencies>
+        <plugin-module>webfx-cli</plugin-module>
+    </dependencies>
+
+    <required-libraries>
+        <webfx-library artifact="dev.webfx:webfx-parent:0.1.0-SNAPSHOT"/>
+        <webfx-library artifact="dev.webfx:webfx-cli:0.1.0-SNAPSHOT"/>
+    </required-libraries>
+
+    <maven-repositories>
+        <webfx-repository/>
+    </maven-repositories>
+
+    <maven-pom-manual>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <!-- This is to remove the original transitive dependencies present in webfx-cli, so that
+                                     the webfx-maven-plugin (which uses this webfx-cli-fat project) won't unnecessarily
+                                     download all these transitive dependencies before running. -->
+                                <createDependencyReducedPom>true</createDependencyReducedPom>
+                                <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </maven-pom-manual>
+
+</project>
